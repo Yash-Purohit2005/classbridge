@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: classbridge-backend
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  jpa:
+    hibernate:
+      ddl-auto: update   # fine for Phase 0; move to 'validate' + Flyway/Liquibase before real users
+    open-in-view: false  # avoid lazy-loading-in-controller footguns
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: ${PORT:8080}   # Render injects PORT — do not hardcode 8080 in prod
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    refresh-secret: ${JWT_REFRESH_SECRET}
+    access-token-expiry-minutes: 15
+    refresh-token-expiry-days: 7
+
+logging:
+  level:
+    com.livestudy.platform: DEBUG
+    org.hibernate.SQL: DEBUG
