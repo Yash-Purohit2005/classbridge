@@ -5,14 +5,14 @@ spring:
     active: ${SPRING_PROFILES_ACTIVE:dev}
   jpa:
     hibernate:
-      ddl-auto: update   # fine for Phase 0; move to 'validate' + Flyway/Liquibase before real users
+      ddl-auto: validate
     open-in-view: false  # avoid lazy-loading-in-controller footguns
     properties:
       hibernate:
         format_sql: true
 
 server:
-  port: ${PORT:8080}   # Render injects PORT — do not hardcode 8080 in prod
+  port: ${PORT:8080}
 
 app:
   jwt:
@@ -23,5 +23,5 @@ app:
 
 logging:
   level:
-    com.livestudy.platform: DEBUG
+    com.classbridge.platform: DEBUG
     org.hibernate.SQL: DEBUG
