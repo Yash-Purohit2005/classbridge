@@ -18,15 +18,18 @@ public class LoginService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
-    public LoginService(UserRepository userRepository, PasswordEncoder passwordEncoder,JwtService jwtService){
+    public LoginService(UserRepository userRepository, PasswordEncoder passwordEncoder,JwtService jwtService,
+                        RefreshTokenService refreshTokenService){
         this.userRepository=userRepository;
         this.passwordEncoder=passwordEncoder;
         this.jwtService=jwtService;
+        this.refreshTokenService=refreshTokenService;
     }
 
 
-    @Transactional(readOnly = true)
+    @Transactional
     public LoginResponse loginWithCredentials(LoginRequest loginRequest){
 
         User user = userRepository.findByEmail(loginRequest.email())
@@ -46,6 +49,8 @@ public class LoginService {
                user.getRole().name()
        );
 
-       return new LoginResponse(token);
+       String refreshToken = refreshTokenService.issue(user);
+
+       return new LoginResponse(token,refreshToken);
     }
 }

@@ -23,5 +23,5 @@ app:
 
 logging:
   level:
-    com.classbridge.platform: DEBUG
+    com.classbridge: DEBUG
     org.hibernate.SQL: DEBUG

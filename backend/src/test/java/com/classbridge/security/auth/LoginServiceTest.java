@@ -1,6 +1,8 @@
 package com.classbridge.security.auth;
 
 import com.classbridge.auth.LoginService;
+import com.classbridge.auth.RefreshToken;
+import com.classbridge.auth.RefreshTokenService;
 import com.classbridge.auth.SignupService;
 import com.classbridge.auth.dto.LoginRequest;
 import com.classbridge.auth.dto.LoginResponse;
@@ -27,6 +29,9 @@ public class LoginServiceTest {
 
     @Autowired
    private JwtService jwtService;
+
+    @Autowired
+    private RefreshTokenService refreshTokenService;
 
     private static final String PASSWORD = "Password@!123";
 
@@ -69,6 +74,10 @@ public class LoginServiceTest {
         assertEquals(saved.getId(),jwtService.extractUserId(claims));
         assertEquals(saved.getOrganization().getId(),jwtService.extractOrgId(claims));
         assertEquals(saved.getRole().name(),jwtService.extractRole(claims));
+
+        assertNotNull(loginResponse.refreshToken());
+        RefreshToken validated = refreshTokenService.validate(loginResponse.refreshToken());
+        assertEquals(saved.getId(), validated.getUser().getId());
 
     }
 
