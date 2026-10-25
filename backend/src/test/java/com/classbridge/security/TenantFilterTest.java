@@ -74,4 +74,48 @@ public class TenantFilterTest {
         assertEquals(userInOrg1.getId(), result.get(0).getId());
     }
 
+    @Test
+    void filterRestrictsResultsToOrganizationTwo() {
+        Organization org1 = new Organization();
+        org1.setName("Org One");
+        org1.setSlug("org-one-" + System.currentTimeMillis());
+        org1 = organizationRepository.save(org1);
+
+        Organization org2 = new Organization();
+        org2.setName("Org Two");
+        org2.setSlug("org-two-" + System.currentTimeMillis());
+        org2 = organizationRepository.save(org2);
+
+        User userInOrg1 = new User();
+        userInOrg1.setOrganization(org1);
+        userInOrg1.setName("User One");
+        userInOrg1.setEmail("user1-" + System.currentTimeMillis() + "@test.com");
+        userInOrg1.setPasswordHash("placeholder");
+        userInOrg1.setRole(Role.STUDENT);
+        userInOrg1.setStatus(UserStatus.ACTIVE);
+        userRepository.save(userInOrg1);
+
+        User userInOrg2 = new User();
+        userInOrg2.setOrganization(org2);
+        userInOrg2.setName("User Two");
+        userInOrg2.setEmail("user2-" + System.currentTimeMillis() + "@test.com");
+        userInOrg2.setPasswordHash("placeholder");
+        userInOrg2.setRole(Role.STUDENT);
+        userInOrg2.setStatus(UserStatus.ACTIVE);
+        userRepository.save(userInOrg2);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        Session session = entityManager.unwrap(Session.class);
+
+        session.enableFilter("tenantFilter")
+                .setParameter("orgId", org2.getId());
+
+        List<User> result = userRepository.findAll();
+
+        assertEquals(1, result.size());
+        assertEquals(userInOrg2.getId(), result.get(0).getId());
+    }
+
 }
